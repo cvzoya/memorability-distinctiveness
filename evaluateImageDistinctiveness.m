@@ -29,7 +29,10 @@ if nargin < 4
 end
 % ------------
 
-allfeats = [feats_targets ; feats_fillers];
+% compute features using only the filler images:
+allfeats = feats_fillers;
+% or using the features of both targets and fillers:
+% allfeats = [feats_targets ; feats_fillers];
 
 % probability model under all context
 fprintf('Estimating kernel density...'); tic;
