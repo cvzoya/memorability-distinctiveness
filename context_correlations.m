@@ -23,17 +23,20 @@ load(fullfile(maindir,'image_data_targets.mat'));
 load(fullfile(maindir,'image_data_fillers.mat'));
 
 % a list of all the scene category names and labels
-load(fullfile(maindir,'sceneTypes'));
+load('sceneTypes');
 
 % image matrices
 img_t = load(fullfile(maindir,'img_targets'));
 img_f = load(fullfile(maindir,'img_fillers'));
 
 % feature matrices
+% GIST FEATURES:
 %gist_t = load(fullfile(maindir,'gist_targets'));
 %gist_f = load(fullfile(maindir,'gist_fillers'));
+% OBJECT-BASED CNN FEATURES:
 %fc7_t = load(fullfile(maindir,'fc7_targets'));
 %fc7_f = load(fullfile(maindir,'fc7_fillers'));
+% SCENE-BASED CNN FEATURES:
 deep_scene_t = load(fullfile(maindir,'deep_scene_targets'));
 deep_scene_f = load(fullfile(maindir,'deep_scene_fillers'));
 

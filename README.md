@@ -5,7 +5,7 @@ If you use this data, please cite:
 Zoya Bylinskii, Phillip Isola, Constance Bainbridge, Antonio Torralba, Aude Oliva.
 "Intrinsic and Extrinsic Effects on Image Memorability", Vision Research (2015)
 
-Project page: http://figrim.mit.edu
+Project page: http://figrim.mit.edu 
 
 ------------------------------------------------------------------
 
@@ -16,6 +16,8 @@ Project page: http://figrim.mit.edu
 [calculateScores.m](calculateScores.m) computes 5 different memorability scores: HR (hit rate), FAR (false alarm rate), ACC (accuracy), DPRIME (d-prime), and MI (mutual information). The calculations are included here: http://figrim.mit.edu/supplemental.pdf.
 
 ### Reproduce the plots presented in the paper 
+
+Download the data files available here: http://figrim.mit.edu 
 
 [context_correlations.m](context_correlations.m) The main function to run for distinctiveness computations and correlation with memorability scores, for the within-category (AMT 1) and across-category (AMT 2) experiments.
 
