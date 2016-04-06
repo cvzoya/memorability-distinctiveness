@@ -1,24 +1,22 @@
-% This function takes in target and filler (optional) image features.
+% This function takes in target and filler image features and a set of
+% memorability scores for all the target images.
 % It computes the negative log likelihood of each target image with respect
-% to the other targets (and fillers) in feature space. 
-% We call this "contextual distinctiveness": the distinctiveness of this image
-% in the context of all the other targets (and fillers).
-% This distinctiveness can then be correlated with image scores (like
-% memroability).
+% to the other targets and fillers (in feature space). 
+% We call this "contextual distinctiveness" (the distinctiveness of this image
+% in the context of all the other targets and fillers).
+% This distinctiveness is then correlated with a number of memorability
+% measurements (hit rate, false alarm rate, accuracy, dprime, and mutual
+% information).
 
-% Zoya Bylinskii and Phillip Isola, last modified: Feb. 2016
+% Zoya Bylinskii and Phillip Isola, last modified: Oct. 15
 
-% Cite:
-% Z. Bylinskii, P. Isola, C. Bainbridge, A. Torralba, A. Oliva
-% "Intrinsic and extrinsic effects on image memorability"
-% Vision research, 2015
-
-function [p_all, p_evaled_all] = evaluateImageDistinctiveness(feats_targets,feats_fillers,opts)
-% feats_targets should be an (ntargets x feature_dim) matrix (note, you can
-% specify one target at a time by passing in feats_targets as a 1 x feature_dim vector)
-% feats_fillers should be an (nfillers x feature_dim) matrix if provided,
-% but can be left out entirely; in this case, the likelihood of all the
-% target features will be calculated in the context of all the other targets
+function [p_all, p_evaled_all, mem_measures, mem_measures_names] = evaluateImageDistinctiveness(scores,feats_targets,feats_fillers,opts)
+% scores should be a structure with the following fields: 
+%    hits, false_alarms, misses, correct_rejections
+%    length(scores) should be equal to the number of target images
+% so for example, scores(i).hits should be the number of hits for target image i
+% feats_targets should be an (ntargets x feature_dim) matrix
+% feats_fillers should be an (nfillers x feature_dim) matrix
 
 % PARAMETERS
 if nargin < 4
@@ -29,45 +27,26 @@ if nargin < 4
 end
 % ------------
 
-if nargin < 2 % only target features provided
-    allfeats = feats_targets;  
-else
-    if size(feats_targets,2)~=size(feats_fillers,2)
-        error('Target and filler features should have the same feature dimensions.'); 
-    end
-    % combine target and filler features for joint dimensionality reduction and
-    % rescaling
-    allfeats = [feats_targets ; feats_fillers];
-    ntargets = size(feats_targets,1);
-    nfillers = size(feats_fillers,1);
-end
+ntargets = length(scores);
+assert(ntargets==size(feats_targets,1));
 
-% dimensionality reduction is performed for computational efficiency
-% (choose a number of dimensions that makes sense for your problem), or 
-% comment out this line
-allfeats = pca(allfeats,10);
+fprintf('Calculating scores...'); tic
 
-% this rescales the feature values into a valid range:
-allfeats_rescaled = mat2gray(allfeats);
+[mem_measures,mem_measures_names] = calculateScores(scores);
 
-if nargin < 2
-    feats_targets_rescaled = allfeats_rescaled;
-else
-    % separate the processed features back into targets and fillers
-    feats_targets_rescaled = allfeats_rescaled(1:ntargets,:);
-    feats_fillers_rescaled = allfeats_rescaled((ntargets+1):end,:);
-end
+fprintf('%2.2f sec\n',toc);
+
+
+allfeats = [feats_targets ; feats_fillers];
 
 % probability model under all context
 fprintf('Estimating kernel density...'); tic;
-% can choose to estimate density using all features, or only filler features
-p_all = kde(allfeats_rescaled',opts.kde.bw_selection,[],opts.kde.kernel_type);   
-%p_all = kde(feats_fillers_rescaled',opts.kde.bw_selection,[],opts.kde.kernel_type);  
+p_all = kde(allfeats',opts.kde.bw_selection,[],opts.kde.kernel_type);       
 fprintf('%2.2f sec\n',toc);
 
 % evaluated probabilities under p_all
 fprintf('Evaluating probabilities...'); tic
-p_evaled_all = evaluate(p_all,feats_targets_rescaled',opts.kde.tol);            
+p_evaled_all = evaluate(p_all,feats_targets',opts.kde.tol);            
 fprintf('%2.2f sec\n',toc);
 
 fprintf('Done everything.\n');

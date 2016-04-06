@@ -5,15 +5,15 @@
 % "Intrinsic and extrinsic effects on image memorability"
 % Vision research, 2015
 
+% This function computes and returns the following 5 scores:
+% HR (hit rate), FAR (false alarm rate), ACC (accuracy), DPRIME (d-prime),
+% MI (mutual information)
+
 function [mem_measures,mem_measures_names] = calculateScores(measurements)
 % measurements should be a structure with the following fields: 
 %    hits, false_alarms, misses, correct_rejections
 %    length(measurements) should be equal to the number of target images
 % so for example, measurements(i).hits should be the number of hits for target image i
-
-% this function computes and returns the following 5 scores:
-% HR (hit rate), FAR (false alarm rate), ACC (accuracy), DPRIME (d-prime),
-% MI (mutual information)
 
 % mem_measures is a cell with 5 vectors, one corresponding to each of the
 % above 5 scores; and mem_measures_names is just a cell with 5 strings,
